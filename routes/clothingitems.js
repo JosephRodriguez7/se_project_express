@@ -7,6 +7,6 @@ const {
 
 router.get("/", getItems);
 router.post("/", postNewItem);
-router.post("/:itemId", deleteItem);
+router.delete("/:itemId", deleteItem);
 
 module.exports = router;
