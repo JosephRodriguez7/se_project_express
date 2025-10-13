@@ -4,7 +4,10 @@ const getItems = (req, res) => {
   clothingItem
     .find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => res.status(500).send({ message: "Server error" }));
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({ message: "Server error" });
+    });
 };
 
 const postNewItem = (req, res) => {
@@ -14,7 +17,10 @@ const postNewItem = (req, res) => {
   clothingItem
     .create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
-    .catch((err) => res.status(400).send({ message: "Invalid data" }));
+    .catch((err) => {
+      console.error(err);
+      res.status(400).send({ message: "Invalid data" });
+    });
 };
 
 const deleteItem = (req, res) => {
@@ -28,7 +34,10 @@ const deleteItem = (req, res) => {
       }
       res.status(200).send({ message: "Item deleted " });
     })
-    .catch((err) => res.status(500).send({ message: "Internal server error" }));
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({ message: "Internal server error" });
+    });
 };
 
 module.exports = { getItems, postNewItem, deleteItem };
