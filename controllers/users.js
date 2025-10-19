@@ -48,6 +48,9 @@ const createUser = (req, res) => {
       });
     })
     .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Invalid data" + err.message });
+      }
       console.error(err);
       res.status(500).send({ message: "Error creating user" });
     });
