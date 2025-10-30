@@ -16,7 +16,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
-app.post("/login", login);
+app.post("/signin", login);
 app.post("/signup", createUser);
 
 app.use("/", mainRouter);
