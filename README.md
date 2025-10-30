@@ -4,7 +4,7 @@ This is the backend for the WTWR (What To Wear) application. It provides a JSON 
 
 ### The frontend repo can be found here:
 
-[text](https://github.com/JosephRodriguez7/se_project_react)
+[link to frontend](https://github.com/JosephRodriguez7/se_project_react)
 
 ## Features
 
