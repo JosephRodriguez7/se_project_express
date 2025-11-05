@@ -3,41 +3,45 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const auth = require("../middlewares/auth");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} = require("../middlewares/error-handler");
 
-const getAllUsers = (req, res) => {
+const getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({ message: "Server Error" });
-    });
+    .catch(next);
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User not found" });
+        throw new NotFoundError("User not found");
       }
       res.status(200).send(user);
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send({ message: "Server Error" });
-    });
+    .catch(next);
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
+
+  if (!email || !password) {
+    throw new BadRequestError("Email and password are required");
+  }
+
   bcrypt
     .hash(password, 10)
     .then((hashedPassword) => {
       return User.findOne({ email }).then((existingUser) => {
         if (existingUser) {
-          return res
-            .status(409)
-            .send({ message: "A user already exists with that email" });
+          throw new ConflictError("A user already exists with that email");
         }
         return User.create({
           name,
@@ -49,16 +53,21 @@ const createUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: "Invalid data" + err.message });
+        next(new BadRequestError(err.message));
+      } else if (err.statusCode) {
+        next(err);
+      } else {
+        next(err);
       }
-      console.error(err);
-      res.status(500).send({ message: "Error creating user" });
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  console.log("Login attempt with:", email, password);
+
+  if (!email || !password) {
+    throw new BadRequestError("Email and password are required");
+  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -67,14 +76,20 @@ const login = (req, res) => {
       });
       res.status(200).send({ token, message: "User logged in" });
     })
-    .catch((err) => {
-      res.status(401).send({ message: "Incorrect email or password" });
+    .catch(() => {
+      next(new UnauthorizedError("Incorrect email or password"));
     });
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { name, avatar } = req.body;
   const userId = req.user._id;
+
+  if (!name && !avatar) {
+    throw new BadRequestError(
+      "At least one of name or avatar must be provided"
+    );
+  }
 
   User.findByIdAndUpdate(
     userId,
@@ -83,17 +98,18 @@ const updateProfile = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User not found" });
+        throw new NotFoundError("User not found");
       }
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: "Invalid data" });
+        next(new BadRequestError(err.message));
+      } else if (err.statusCode) {
+        next(err);
+      } else {
+        next(err);
       }
-
-      console.error(err);
-      res.status(500).send({ message: "Server Error" });
     });
 };
 
