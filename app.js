@@ -1,3 +1,6 @@
+require("dotenv").config();
+console.log(process.env);
+
 const express = require("express");
 const { errors } = require("celebrate");
 const mainRouter = require("./routes/index");
