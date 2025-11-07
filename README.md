@@ -2,6 +2,14 @@
 
 This is the backend for the WTWR (What To Wear) application. It provides a JSON API backed by MongoDB and implements user authentication via JWT, password hashing with bcrypt, and ownership checks for protected actions.
 
+### The project's domain name can be found here:
+
+[link to project's domain](http://www.what2wear.ignorelist.com/)
+
+#### IMPORTANT:
+
+certbot --nginx fails to issue HTTPS certificates for "ignorelist.com" due to "too many certificates" issued for this domain. Therefore, HTTPS could not be set up for this project.
+
 ### The frontend repo can be found here:
 
 [link to frontend](https://github.com/JosephRodriguez7/se_project_react)
@@ -78,3 +86,7 @@ curl -X PATCH http://localhost:3001/users/me \
 	-H "Authorization: Bearer <token>" \
 	-d '{"name":"Alice New","avatar":"https://example.com/a2.png"}'
 ```
+
+## Future improvements:
+
+Migrate to a different domain for HTTPS certificate.
