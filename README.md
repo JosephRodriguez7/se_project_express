@@ -2,6 +2,10 @@
 
 This is the backend for the WTWR (What To Wear) application. It provides a JSON API backed by MongoDB and implements user authentication via JWT, password hashing with bcrypt, and ownership checks for protected actions.
 
+### DEMO:
+
+[Project's demo video](https://www.loom.com/share/c84d01d9c9c5457aba0ea2acaaaeb23a)
+
 ### The project's domain name can be found here:
 
 [link to project's domain](http://www.what2wear.ignorelist.com/)
